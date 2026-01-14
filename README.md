@@ -30,6 +30,7 @@ Demo web app for Meta App Review using **Instagram Business Login (Instagram Pla
    - `IG_APP_SECRET`
    - `BASE_URL` (e.g. `http://localhost:3000`)
    - `SESSION_SECRET`
+   - Optional: `HOST_PORT` if port `3000` is already in use on the host
    - Optional: `REVIEW_USER` / `REVIEW_PASS` to enable Basic Auth
 
 3. Add **Valid OAuth Redirect URIs** in Meta Developer Console:
@@ -50,6 +51,8 @@ Open: `http://localhost:3000`
 ```bash
 docker compose up --build
 ```
+
+If port `3000` is already in use on the host, set `HOST_PORT=3001` in `.env` (or any free port) and access the app at `http://localhost:3001`.
 
 ## App Review Flow (Video Script)
 
