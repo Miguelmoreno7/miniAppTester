@@ -1,0 +1,7 @@
+services:
+  app:
+    build: .
+    ports:
+      - "${HOST_PORT:-3001}:3000"
+    env_file:
+      - .env
