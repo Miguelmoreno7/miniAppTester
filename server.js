@@ -85,7 +85,8 @@ const renderPage = (title, body) => `<!doctype html>
 </body>
 </html>`;
 
-const buildGraphUrl = (path) => `https://graph.facebook.com/v19.0/${path}`;
+const IG_API_VERSION = "v19.0"; // o la que uses
+const buildGraphUrl = (path) => `https://graph.instagram.com/${IG_API_VERSION}/${path}`;
 
 app.get("/", (req, res) => {
   const profile = req.session.profile;
