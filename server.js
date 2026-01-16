@@ -88,6 +88,29 @@ const renderPage = (title, body) => `<!doctype html>
 const IG_API_VERSION = "v19.0"; // o la que uses
 const buildGraphUrl = (path) => `https://graph.instagram.com/${IG_API_VERSION}/${path}`;
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function waitForMediaContainer(containerId, accessToken) {
+  // ~30s total (15 * 2s). Ajusta si usas videos.
+  for (let i = 0; i < 15; i++) {
+    const statusResp = await axios.get(buildGraphUrl(containerId), {
+      params: { fields: "status_code", access_token: accessToken },
+    });
+
+    const status = statusResp.data?.status_code;
+
+    if (status === "FINISHED") return true;
+    if (status === "ERROR") {
+      throw new Error(`Container status ERROR: ${JSON.stringify(statusResp.data)}`);
+    }
+
+    await sleep(2000);
+  }
+
+  return false;
+}
+
+
 app.get("/", (req, res) => {
   const profile = req.session.profile;
   const connected = profile ? `Connected as @${profile.username}` : "Not connected";
@@ -205,12 +228,19 @@ app.post("/publish", ensureConnected, async (req, res) => {
 
     const creationId = creationResponse.data.id;
 
+    // ✅ Espera a que el container esté listo (evita 9007)
+    const ready = await waitForMediaContainer(creationId, accessToken);
+    if (!ready) {
+      throw new Error("The media is not ready after waiting. Try again in a few seconds.");
+    }
+    
     const publishResponse = await axios.post(buildGraphUrl(`${igUserId}/media_publish`), null, {
       params: {
         creation_id: creationId,
         access_token: accessToken,
       },
     });
+
 
     const body = `
     <div class="card">
