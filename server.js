@@ -123,7 +123,7 @@ app.get("/auth/login", (req, res) => {
     state,
   });
 
-  const url = "https://instapub.moviatech.com.mx/auth/callback";
+  const url = `https://www.instagram.com/oauth/authorize?${params.toString()}`;
   res.redirect(url);
 });
 
